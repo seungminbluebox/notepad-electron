@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Patrick+Hand&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="drop-overlay">
+      <img src="./image/drag and drop.png" alt="드래그 앤 드롭 안내" />
+    </div>
+    <div class="container">
+      <img class="spring" src="./image/스프링.png" />
+      <div class="notepad">
+        <div class="top-bar">
+          <div class="left-group">
+            <div class="writing">✏️ Writing...</div>
+            <div class="saved">💾 Saved!</div>
+          </div>
+
+          <div class="note">
+            <span class="note-span">📝</span>
+            <span class="note-span2" title="파일명 전체">new note</span>
+          </div>
+        </div>
+        <div class="note-area">
+          <textarea
+            id="memo"
+            placeholder="📝Write your notes here..."
+          ></textarea>
+        </div>
+      </div>
+      <button class="new-1"><img src="./image/newnote.png" /></button>
+      <button class="open-1"><img src="./image/open.png" /></button>
+      <button class="save-1"><img src="./image/save.png" /></button>
+      <button class="setting-1"><img src="./image/setting.png" /></button>
+    </div>
+
+    <div class="settings-modal hidden">
+      <div class="settings-content">
+        <h2>환경 설정</h2>
+
+        <div class="setting-section">
+          <button id="bgSelectBtn">🖼️ 배경 이미지 선택</button>
+        </div>
+
+        <button id="closeSettings">설정하고 닫기</button>
+      </div>
+    </div>
+
+    <script src="./render.js"></script>
+  </body>
+</html>

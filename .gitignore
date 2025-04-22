@@ -1,0 +1,15 @@
+# node modules - don't commit!
+node_modules/
+
+# Electron build outputs (나중에 쓸 dist 폴더도 미리 제외)
+dist/
+
+# 로그 파일들
+*.log
+
+# VSCode 설정 (선택)
+.vscode/
+
+# OS별 임시 파일
+.DS_Store
+Thumbs.db
