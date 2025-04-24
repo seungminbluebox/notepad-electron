@@ -62,7 +62,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* z-index: 1000; */
+  z-index: 10ㄴ;
   pointer-events: none; /* 드래그 방해 안 되게 */
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -395,4 +395,32 @@ body {
 #bgSelectBtn:active {
   transform: scale(0.98);
   background-color: #fbe48c;
+}
+#defaultBg {
+  background-color: #ffecec;
+  border: 2px solid #ffb3b3;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-family: "Gowun Dodum", sans-serif;
+  color: #a64444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  margin-left: 12px; /* 간격 */
+}
+
+#defaultBg:hover {
+  background-color: #ffd1d1;
+  transform: scale(1.02);
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+#defaultBg:active {
+  transform: scale(0.98);
+  background-color: #ffbfbf;
+}
+.setting-section {
+  display: flex;
+  align-items: center;
 }

@@ -30,4 +30,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   saveBackgroundPath: (path) => localStorage.setItem("backgroundImage", path),
   loadBackgroundPath: () => localStorage.getItem("backgroundImage"),
   windowControl: (action) => ipcRenderer.send("window-control", action),
+  getUserDataPath: () => ipcRenderer.invoke("get-user-data-path"),
+  restoreDefaultBackground: () =>
+    ipcRenderer.invoke("restore-default-background"),
 });

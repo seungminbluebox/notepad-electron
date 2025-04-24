@@ -1,6 +1,25 @@
 //render.js
 
 window.addEventListener("DOMContentLoaded", () => {
+  (async () => {
+    const savedBg = window.electronAPI.loadBackgroundPath();
+
+    function toFileUrl(path) {
+      return `file://${encodeURI(path.replaceAll("\\", "/"))}`;
+    }
+
+    if (savedBg) {
+      document.body.style.backgroundImage = `url("${toFileUrl(savedBg)}")`;
+      console.log("🔁 복원된 배경:", savedBg);
+    } else {
+      const userDataPath = await window.electronAPI.getUserDataPath?.(); // 추가 필요
+      const fallbackBg = toFileUrl(
+        `${userDataPath.replaceAll("\\", "/")}/background.png`
+      );
+      document.body.style.backgroundImage = `url("${fallbackBg}")`;
+      console.log("🆕 기본 배경 적용:", fallbackBg);
+    }
+  })();
   const saveBtn = document.querySelector(".save-1");
   const memo = document.querySelector("#memo");
   const openBtn = document.querySelector(".open-1");
@@ -10,7 +29,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const settingsBtn = document.querySelector(".setting-1");
   const settingsModal = document.querySelector(".settings-modal");
   const closeBtn = document.querySelector("#closeSettings");
-  const savedBg = window.electronAPI.loadBackgroundPath();
+  // const savedBg = window.electronAPI.loadBackgroundPath();
 
   document.querySelector(".min-btn").addEventListener("click", () => {
     window.electronAPI.windowControl("minimize");
@@ -24,10 +43,10 @@ window.addEventListener("DOMContentLoaded", () => {
   function toFileUrl(path) {
     return `file://${encodeURI(path.replaceAll("\\", "/"))}`;
   }
-  if (savedBg) {
-    document.body.style.backgroundImage = `url("${toFileUrl(savedBg)}")`;
-    console.log("🔁 복원된 배경:", savedBg);
-  }
+  // if (savedBg) {
+  //   document.body.style.backgroundImage = `url("${toFileUrl(savedBg)}")`;
+  //   console.log("🔁 복원된 배경:", savedBg);
+  // }
 
   let currentFilePath = null;
   let isWritingShown = false;
@@ -216,5 +235,23 @@ window.addEventListener("DOMContentLoaded", () => {
       console.log("바뀐 배경화면", document.body.style.backgroundImage);
       window.electronAPI.saveBackgroundPath(newBgPath); // 경로 저장
     }
+  });
+  document.getElementById("defaultBg").addEventListener("click", async () => {
+    // main → preload에서 getUserDataPath 노출 필요
+    const userDataPath = await window.electronAPI.getUserDataPath?.();
+
+    // fallback 경로 (복사될 위치)
+    const fallbackBg = `${userDataPath.replaceAll("\\", "/")}/background.png`;
+
+    // 👉 기본 이미지를 다시 복사해달라고 요청
+    await window.electronAPI.restoreDefaultBackground?.(); // 이 함수도 preload/main에 추가 필요
+
+    const toFileUrl = (path) => `file://${encodeURI(path)}`;
+    const finalPath = toFileUrl(fallbackBg) + `?v=${Date.now()}`; // 캐시 무효화
+
+    document.body.style.backgroundImage = `url("${finalPath}")`;
+    window.electronAPI.saveBackgroundPath(fallbackBg);
+
+    console.log("🆕 기본 배경 복원됨:", finalPath);
   });
 });

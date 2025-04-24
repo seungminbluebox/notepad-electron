@@ -1,6 +1,6 @@
 {
   "name": "notepad",
-  "version": "1.0.1",
+  "version": "1.0.12",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -24,20 +24,19 @@
     },
     "files": [
       "**/*",
-      "!node_modules/**/*",
       "!dist",
       "!src",
-      "!.git",
-      "!.vscode",
-      "!*.md"
+      "node_modules/electron-updater/**/*",
+      "image/**/*"
     ],
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "artifactName": "notepad-advance-Setup-${version}.${ext}"
     },
     "nsis": {
-      "oneClick": false,
+      "oneClick": true,
       "perMachine": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": false
     },
     "publish": {
       "provider": "github",
@@ -49,6 +48,7 @@
     }
   },
   "dependencies": {
-    "electron-updater": "^6.6.2"
+    "electron-updater": "^6.6.2",
+    "ms": "^2.1.3"
   }
 }

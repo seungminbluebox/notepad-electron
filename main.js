@@ -27,9 +27,7 @@ function createWindow() {
 }
 app.whenReady().then(() => {
   const userDataPath = app.getPath("userData");
-  console.log("userDataPath", userDataPath);
   const bgImagePath = path.join(userDataPath, "background.png");
-  console.log("bgImagePath", bgImagePath);
 
   // 만약 아직 배경 이미지가 없다면, 기본 이미지 복사
   if (!fs.existsSync(bgImagePath)) {
@@ -45,7 +43,47 @@ app.whenReady().then(() => {
   }
 
   createWindow();
-  autoUpdater.checkForUpdatesAndNotify();
+
+  // ✅ 여기부터 추가
+  autoUpdater.on("checking-for-update", () => {
+    console.log("🔍 업데이트 확인 중...");
+  });
+  autoUpdater.on("update-available", () => {
+    console.log("✅ 업데이트 가능!");
+  });
+  autoUpdater.on("update-not-available", () => {
+    console.log("📭 최신 버전입니다.");
+  });
+  autoUpdater.on("error", (err) => {
+    console.error("❌ 업데이트 오류:", err);
+  });
+  autoUpdater.on("download-progress", (progress) => {
+    console.log(`⬇️ 다운로드 중... ${Math.round(progress.percent)}%`);
+  });
+  autoUpdater.on("update-downloaded", () => {
+    console.log("✅ 다운로드 완료! 앱 재시작 시 적용됨");
+  });
+  autoUpdater.on("update-downloaded", () => {
+    dialog
+      .showMessageBox({
+        type: "warning", // 'info', 'none', 'warning', 'error', 'question' 가능
+        title: "🔥 업데이트 완료됨",
+        message: "📦 새로워진 notepad advance가 준비됐어요!",
+        detail:
+          "✔ 배경 이미지 자동 복원\n✔ 저장 애니메이션 개선\n✔ 단축키 버그 수정\n\n재시작하시면 바로 적용돼요 :)",
+
+        buttons: ["지금 재시작", "나중에 할게요"],
+        defaultId: 0, // 기본 선택 버튼 (0번째: 지금 재시작)
+        cancelId: 1, // 취소 버튼
+      })
+      .then((result) => {
+        if (result.response === 0) {
+          autoUpdater.quitAndInstall();
+        }
+      });
+  });
+  // 기존 코드
+  autoUpdater.checkForUpdatesAndNotify(); // 🔍 업데이트 시작
 });
 
 ipcMain.handle("select-background", async () => {
@@ -138,5 +176,22 @@ ipcMain.on("window-control", (event, action) => {
     case "close":
       win.close();
       break;
+  }
+});
+ipcMain.handle("get-user-data-path", () => {
+  return app.getPath("userData");
+});
+ipcMain.handle("restore-default-background", () => {
+  const userDataPath = app.getPath("userData");
+  const destPath = path.join(userDataPath, "background.png");
+  const defaultPath = path.join(__dirname, "image", "defaultBG.jpg");
+
+  if (fs.existsSync(defaultPath)) {
+    fs.copyFileSync(defaultPath, destPath);
+    console.log("🔄 defaultBG.jpg 복원 완료:", destPath);
+    return true;
+  } else {
+    console.warn("❌ 기본 이미지 없음:", defaultPath);
+    return false;
   }
 });
