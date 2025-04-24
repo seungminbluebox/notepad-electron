@@ -11,6 +11,16 @@ window.addEventListener("DOMContentLoaded", () => {
   const settingsModal = document.querySelector(".settings-modal");
   const closeBtn = document.querySelector("#closeSettings");
   const savedBg = window.electronAPI.loadBackgroundPath();
+
+  document.querySelector(".min-btn").addEventListener("click", () => {
+    window.electronAPI.windowControl("minimize");
+  });
+  // document.querySelector(".max-btn").addEventListener("click", () => {
+  //   window.electronAPI.windowControl("maximize");
+  // });
+  document.querySelector(".close-btn").addEventListener("click", () => {
+    window.electronAPI.windowControl("close");
+  });
   function toFileUrl(path) {
     return `file://${encodeURI(path.replaceAll("\\", "/"))}`;
   }

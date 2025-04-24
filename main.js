@@ -8,9 +8,12 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1700, //800
     height: 1000,
+    frame: false, // 👈 기본 윈도우 타이틀 바 제거
+
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
+      icon: path.join(__dirname, "image", "icon.ico"), // 👈 여기에 아이콘 경로 지정
       nodeIntegration: false, // ✅ 반드시 false!
       enableRemoteModule: false, // ✅ 보안상 필요 없음
       sandbox: false, // ⚠️ 한글 경로 대응 가능, 단 보안상 위험 요소 있음
@@ -117,4 +120,20 @@ ipcMain.on("full-file-read", (event, filePath) => {
     content,
     filepath: filePath,
   });
+});
+ipcMain.on("window-control", (event, action) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (!win) return;
+
+  switch (action) {
+    case "minimize":
+      win.minimize();
+      break;
+    case "maximize":
+      win.isMaximized() ? win.unmaximize() : win.maximize();
+      break;
+    case "close":
+      win.close();
+      break;
+  }
 });

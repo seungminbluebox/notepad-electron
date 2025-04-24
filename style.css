@@ -26,9 +26,19 @@
     opacity: 1;
   }
 }
+/* 드래그 전용 레이어 (배경 이미지에만 적용됨) */
+.drag-region {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%; /* 상단 바만 덮도록 설정 */
+  height: 32px; /* 상단 바 높이 */
+  -webkit-app-region: drag;
+  z-index: 0;
+  pointer-events: none;
+}
 
 body {
-  /* background-image: url("./image/배경화면.jpg"); 이미지 경로를 여기에 입력하세요 */
   background-size: cover; /* 이미지가 화면을 덮도록 설정 */
   background-position: center; /* 이미지가 중앙에 위치하도록 설정 */
   background-repeat: no-repeat; /* 이미지 반복 방지 */
@@ -52,7 +62,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  /* z-index: 1000; */
   pointer-events: none; /* 드래그 방해 안 되게 */
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -74,7 +84,6 @@ body {
   max-width: 90vw;
   height: 800px;
 }
-
 .spring,
 .spring * {
   box-sizing: border-box;
@@ -193,7 +202,7 @@ body {
 .spring {
   position: absolute;
   top: 2.7rem;
-  left: -9.1rem;
+  left: -2.2rem;
   height: 90%;
   pointer-events: none;
 
@@ -240,7 +249,18 @@ body {
   width: 180px;
   height: 90px;
   right: -88px;
-  z-index: 1;
+  /* z-index: 1; */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.min-btn,
+.close-btn {
+  all: unset;
+  position: absolute;
+  width: 55px;
+  height: 90px;
+  right: -88px;
+  /* z-index: 1; */
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -258,11 +278,21 @@ body {
 .setting-1 {
   top: 650px;
 }
+.min-btn {
+  top: -50px;
+  right: 120px;
+}
+.close-btn {
+  top: -50px;
+  right: 60px;
+}
 /* 내부 이미지 크기 정리 */
 .save-1 img,
 .open-1 img,
 .new-1 img,
-.setting-1 img {
+.setting-1 img,
+.close-btn img,
+.min-btn img {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -271,8 +301,10 @@ body {
 .save-1:hover,
 .open-1:hover,
 .new-1:hover,
-.setting-1:hover {
-  z-index: 10;
+.setting-1:hover,
+.min-btn:hover,
+.close-btn:hover {
+  z-index: 3;
   transform: scale(1.05);
 }
 .note-area {
@@ -284,7 +316,7 @@ body {
 }
 
 #memo {
-  z-index: 10;
+  /* z-index: 10; */
   width: 100%;
   height: 100%;
   padding: 30px 35px;
