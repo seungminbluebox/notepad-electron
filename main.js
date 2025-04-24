@@ -1,6 +1,8 @@
 //main.js
 
 const { app, BrowserWindow, dialog, ipcMain } = require("electron");
+const { autoUpdater } = require("electron-updater");
+
 const path = require("path");
 const fs = require("fs");
 
@@ -43,6 +45,7 @@ app.whenReady().then(() => {
   }
 
   createWindow();
+  autoUpdater.checkForUpdatesAndNotify();
 });
 
 ipcMain.handle("select-background", async () => {

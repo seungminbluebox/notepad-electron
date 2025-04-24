@@ -1,6 +1,6 @@
 {
   "name": "notepad",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -39,9 +39,16 @@
       "perMachine": false,
       "allowToChangeInstallationDirectory": true
     },
-    "publish": null,
+    "publish": {
+      "provider": "github",
+      "owner": "seungminbluebox",
+      "repo": "notepad-electron"
+    },
     "mac": {
       "target": []
     }
+  },
+  "dependencies": {
+    "electron-updater": "^6.6.2"
   }
 }
