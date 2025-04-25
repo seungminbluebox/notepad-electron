@@ -45,32 +45,13 @@ app.whenReady().then(() => {
   createWindow();
 
   // ✅ 여기부터 추가
-  autoUpdater.on("checking-for-update", () => {
-    console.log("🔍 업데이트 확인 중...");
-  });
-  autoUpdater.on("update-available", () => {
-    console.log("✅ 업데이트 가능!");
-  });
-  autoUpdater.on("update-not-available", () => {
-    console.log("📭 최신 버전입니다.");
-  });
-  autoUpdater.on("error", (err) => {
-    console.error("❌ 업데이트 오류:", err);
-  });
-  autoUpdater.on("download-progress", (progress) => {
-    console.log(`⬇️ 다운로드 중... ${Math.round(progress.percent)}%`);
-  });
-  autoUpdater.on("update-downloaded", () => {
-    console.log("✅ 다운로드 완료! 앱 재시작 시 적용됨");
-  });
   autoUpdater.on("update-downloaded", () => {
     dialog
       .showMessageBox({
         type: "warning", // 'info', 'none', 'warning', 'error', 'question' 가능
-        title: "🔥 업데이트 완료됨",
+        title: "🔥 New Update",
         message: "📦 새로워진 notepad advance가 준비됐어요!",
-        detail:
-          "✔ 배경 이미지 자동 복원\n✔ 저장 애니메이션 개선\n✔ 단축키 버그 수정\n\n재시작하시면 바로 적용돼요 :)",
+        detail: "재시작하시면 바로 적용돼요 :)",
 
         buttons: ["지금 재시작", "나중에 할게요"],
         defaultId: 0, // 기본 선택 버튼 (0번째: 지금 재시작)

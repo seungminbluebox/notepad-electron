@@ -29,24 +29,16 @@ window.addEventListener("DOMContentLoaded", () => {
   const settingsBtn = document.querySelector(".setting-1");
   const settingsModal = document.querySelector(".settings-modal");
   const closeBtn = document.querySelector("#closeSettings");
-  // const savedBg = window.electronAPI.loadBackgroundPath();
 
   document.querySelector(".min-btn").addEventListener("click", () => {
     window.electronAPI.windowControl("minimize");
   });
-  // document.querySelector(".max-btn").addEventListener("click", () => {
-  //   window.electronAPI.windowControl("maximize");
-  // });
   document.querySelector(".close-btn").addEventListener("click", () => {
     window.electronAPI.windowControl("close");
   });
   function toFileUrl(path) {
     return `file://${encodeURI(path.replaceAll("\\", "/"))}`;
   }
-  // if (savedBg) {
-  //   document.body.style.backgroundImage = `url("${toFileUrl(savedBg)}")`;
-  //   console.log("🔁 복원된 배경:", savedBg);
-  // }
 
   let currentFilePath = null;
   let isWritingShown = false;

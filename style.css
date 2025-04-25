@@ -192,17 +192,17 @@ body {
   animation: pop 0.4s ease-out;
 }
 
-.container {
+/* .container {
   position: relative;
-  width: 600px; /* 원하는 전체 너비 */
+  width: 700px; 
   height: 800px;
-}
+} */
 
 /* 겹쳐지게 만들기 위해 변경 */
 .spring {
   position: absolute;
   top: 2.7rem;
-  left: -2.2rem;
+  left: -4.6rem;
   height: 90%;
   pointer-events: none;
 
@@ -212,7 +212,7 @@ body {
 .notepad {
   position: absolute;
   top: 0;
-  left: 40px; /* 스프링 오른쪽으로 밀기 */
+  /* left: 40px;  */
   width: 540px;
   height: 100%;
   z-index: 2;
@@ -268,23 +268,27 @@ body {
 /* 각각 위치만 조정 */
 .new-1 {
   top: 100px;
+  right: -50px;
 }
 .open-1 {
   top: 200px;
+  right: -50px;
 }
 .save-1 {
   top: 300px;
+  right: -50px;
 }
 .setting-1 {
   top: 650px;
+  right: -50px;
 }
 .min-btn {
   top: -50px;
-  right: 120px;
+  right: 150px;
 }
 .close-btn {
   top: -50px;
-  right: 60px;
+  right: 90px;
 }
 /* 내부 이미지 크기 정리 */
 .save-1 img,
