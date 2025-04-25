@@ -5,12 +5,26 @@ const { autoUpdater } = require("electron-updater");
 
 const path = require("path");
 const fs = require("fs");
+// 🔽 창 만들기 전에 이 부분 추가!
+let openFilePath = null;
+
+// app ready 이전에 args 체크
+if (!app.isPackaged) {
+  openFilePath = process.argv[2]; // 개발환경에서 2번째 인자
+} else {
+  // 패키징된 exe는 1번째가 실행파일 경로, 2번째가 열릴 파일 경로
+  const args = process.argv;
+  if (args.length >= 2) {
+    openFilePath = args[1];
+  }
+}
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1700, //800
-    height: 1000,
+    width: 730,
+    height: 880,
     frame: false, // 👈 기본 윈도우 타이틀 바 제거
+    transparent: true, // ✅ 요게 핵심!
 
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -23,7 +37,12 @@ function createWindow() {
   });
   win.setMenu(null);
   win.loadFile("index.html");
-  win.webContents.openDevTools(); //개발자도구 열기
+  win.webContents.on("did-finish-load", () => {
+    if (openFilePath) {
+      win.webContents.send("open-file-from-arg", openFilePath);
+    }
+  });
+  // win.webContents.openDevTools(); //개발자도구 열기
 }
 app.whenReady().then(() => {
   const userDataPath = app.getPath("userData");
@@ -32,11 +51,8 @@ app.whenReady().then(() => {
   // 만약 아직 배경 이미지가 없다면, 기본 이미지 복사
   if (!fs.existsSync(bgImagePath)) {
     const defaultBg = path.join(__dirname, "image", "defaultBG.jpg");
-    console.log("defaultBg", defaultBg);
     if (fs.existsSync(defaultBg)) {
       fs.copyFileSync(defaultBg, bgImagePath);
-      console.log("✅ completed to copy default background img");
-      console.log("defaultBg", defaultBg);
     } else {
       console.warn("⚠️ there's no default background IMG:", defaultBg);
     }
@@ -80,7 +96,6 @@ ipcMain.handle("select-background", async () => {
     const srcPath = result.filePaths[0];
     const destDir = app.getPath("userData");
     const destPath = path.join(destDir, "background.png");
-    console.log(destPath);
     fs.copyFileSync(srcPath, destPath);
     return destPath;
   }
@@ -169,7 +184,6 @@ ipcMain.handle("restore-default-background", () => {
 
   if (fs.existsSync(defaultPath)) {
     fs.copyFileSync(defaultPath, destPath);
-    console.log("🔄 defaultBG.jpg 복원 완료:", destPath);
     return true;
   } else {
     console.warn("❌ 기본 이미지 없음:", defaultPath);

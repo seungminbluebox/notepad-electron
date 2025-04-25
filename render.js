@@ -2,24 +2,36 @@
 
 window.addEventListener("DOMContentLoaded", () => {
   (async () => {
+    const isTransparent =
+      localStorage.getItem("backgroundTransparent") === "true";
     const savedBg = window.electronAPI.loadBackgroundPath();
 
     function toFileUrl(path) {
       return `file://${encodeURI(path.replaceAll("\\", "/"))}`;
     }
 
-    if (savedBg) {
+    if (isTransparent) {
+      // ✅ 투명 배경 적용
+      document.body.style.backgroundImage = "none";
+      document.body.style.backgroundColor = "transparent";
+      console.log("🔲 투명 배경 복원됨");
+    } else if (savedBg) {
+      // ✅ 커스텀 배경 적용
       document.body.style.backgroundImage = `url("${toFileUrl(savedBg)}")`;
+      document.body.style.backgroundColor = ""; // 혹시 이전에 투명 설정된 것 제거
       console.log("🔁 복원된 배경:", savedBg);
     } else {
-      const userDataPath = await window.electronAPI.getUserDataPath?.(); // 추가 필요
+      // ✅ 기본 배경 적용
+      const userDataPath = await window.electronAPI.getUserDataPath?.();
       const fallbackBg = toFileUrl(
         `${userDataPath.replaceAll("\\", "/")}/background.png`
       );
       document.body.style.backgroundImage = `url("${fallbackBg}")`;
+      document.body.style.backgroundColor = "";
       console.log("🆕 기본 배경 적용:", fallbackBg);
     }
   })();
+
   const saveBtn = document.querySelector(".save-1");
   const memo = document.querySelector("#memo");
   const openBtn = document.querySelector(".open-1");
@@ -107,9 +119,7 @@ window.addEventListener("DOMContentLoaded", () => {
       fileLabel.title = filename;
 
       showSaved();
-      console.log("save success:", filePath);
     } else {
-      console.log("❌ 저장 취소됨 또는 실패함");
     }
   }
   //newNote버튼 기능 구현
@@ -134,8 +144,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
       currentFilePath = filepath; // 🔥 현재 경로 저장
       showWriting(); // 📌 새 파일 불러왔으니 수정 상태
-
-      console.log("open success:", filename);
     }
   });
   //save 버튼 기능 구현
@@ -191,8 +199,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
     currentFilePath = filePath;
     showWriting();
-
-    console.log("📥 드래그로 불러오기 완료:", file.name);
   });
 
   //드래그앤드롭 애니메이션 ux
@@ -222,9 +228,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const newBgPath = await window.electronAPI.selectBackgroundImage(); // 복사 후 경로 반환
     if (newBgPath) {
       const finalPath = toFileUrl(newBgPath) + `?v=${Date.now()}`; // 🔥 캐시 무효화
-      console.log(finalPath);
       document.body.style.backgroundImage = `url("${finalPath}")`; // 바로 반영!
-      console.log("바뀐 배경화면", document.body.style.backgroundImage);
       window.electronAPI.saveBackgroundPath(newBgPath); // 경로 저장
     }
   });
@@ -243,7 +247,24 @@ window.addEventListener("DOMContentLoaded", () => {
 
     document.body.style.backgroundImage = `url("${finalPath}")`;
     window.electronAPI.saveBackgroundPath(fallbackBg);
+    localStorage.removeItem("backgroundTransparent");
 
     console.log("🆕 기본 배경 복원됨:", finalPath);
+  });
+  document.getElementById("transparentBtn").addEventListener("click", () => {
+    document.body.style.backgroundImage = "none";
+    document.body.style.backgroundColor = "transparent";
+
+    // ✅ transparent 상태 저장
+    localStorage.setItem("backgroundTransparent", "true");
+    localStorage.removeItem("backgroundImage"); // 이전 배경 경로 제거
+  });
+  window.electronAPI.onOpenFileFromArg((filePath) => {
+    const content = window.electronAPI.readDroppedFile(filePath);
+    document.querySelector("#memo").value = content;
+    document.querySelector(".note-span2").textContent =
+      window.electronAPI.getFileName(filePath);
+
+    currentFilePath = filePath; // ✅ 꼭 필요함!
   });
 });

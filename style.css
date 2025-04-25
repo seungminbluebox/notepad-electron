@@ -39,6 +39,8 @@
 }
 
 body {
+  /* background-color: transparent; */
+
   background-size: cover; /* 이미지가 화면을 덮도록 설정 */
   background-position: center; /* 이미지가 중앙에 위치하도록 설정 */
   background-repeat: no-repeat; /* 이미지 반복 방지 */
@@ -62,7 +64,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10ㄴ;
+  z-index: 10;
   pointer-events: none; /* 드래그 방해 안 되게 */
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -83,6 +85,7 @@ body {
   width: 600px;
   max-width: 90vw;
   height: 800px;
+  top: 30px;
 }
 .spring,
 .spring * {
@@ -201,9 +204,9 @@ body {
 /* 겹쳐지게 만들기 위해 변경 */
 .spring {
   position: absolute;
-  top: 2.7rem;
-  left: -4.6rem;
-  height: 90%;
+  top: 4.5rem;
+  left: -2.3rem;
+  height: 80%;
   pointer-events: none;
 
   z-index: 3;
@@ -212,7 +215,7 @@ body {
 .notepad {
   position: absolute;
   top: 0;
-  /* left: 40px;  */
+  left: 30px;
   width: 540px;
   height: 100%;
   z-index: 2;
@@ -246,9 +249,9 @@ body {
 .setting-1 {
   all: unset;
   position: absolute;
-  width: 180px;
-  height: 90px;
-  right: -88px;
+  width: 150px;
+  height: 75px;
+  left: 31.75rem;
   /* z-index: 1; */
   cursor: pointer;
   transition: all 0.2s ease;
@@ -267,15 +270,15 @@ body {
 
 /* 각각 위치만 조정 */
 .new-1 {
-  top: 100px;
+  top: 80px;
   right: -50px;
 }
 .open-1 {
-  top: 200px;
+  top: 160px;
   right: -50px;
 }
 .save-1 {
-  top: 300px;
+  top: 240px;
   right: -50px;
 }
 .setting-1 {
@@ -360,6 +363,63 @@ body {
   border-radius: 20px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
+
+.setting-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+/* 공통 버튼 스타일 */
+#bgSelectBtn,
+#defaultBg,
+#transparentBtn {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-family: "Gowun Dodum", sans-serif;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* 🖼️ 배경 이미지 선택 */
+#bgSelectBtn {
+  background-color: #fffbe6;
+  color: #7d6210;
+  border-color: #e6d48b;
+}
+#bgSelectBtn:hover {
+  background-color: #fff3b0;
+  transform: scale(1.03);
+}
+
+/* 🔄 기본 배경 복원 */
+#defaultBg {
+  background-color: #ffecec;
+  color: #a64444;
+  border-color: #ffb3b3;
+}
+#defaultBg:hover {
+  background-color: #ffd1d1;
+  transform: scale(1.03);
+}
+
+/* 🪟 투명 배경 */
+#transparentBtn {
+  background-color: #eef6ff;
+  color: #2d4d8a;
+  border-style: dashed;
+  border-color: #a6c4ff;
+}
+#transparentBtn:hover {
+  background-color: #d8eaff;
+  transform: scale(1.03);
+}
+
 #closeSettings {
   position: relative; /* 부모 요소인 settings-content를 기준으로 위치 설정 */
   bottom: -1rem; /* 아래쪽 여백 */
@@ -376,55 +436,4 @@ body {
 
 #closeSettings:hover {
   background-color: #4e79aa; /* 호버 시 배경색 변경 */
-}
-#bgSelectBtn {
-  background-color: #fff8dc;
-  border: 2px solid #e0c97f;
-  border-radius: 12px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-family: "Gowun Dodum", sans-serif;
-  color: #5a4a1f;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-#bgSelectBtn:hover {
-  background-color: #fdf1c2;
-  transform: scale(1.02);
-  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.15);
-}
-
-#bgSelectBtn:active {
-  transform: scale(0.98);
-  background-color: #fbe48c;
-}
-#defaultBg {
-  background-color: #ffecec;
-  border: 2px solid #ffb3b3;
-  border-radius: 12px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-family: "Gowun Dodum", sans-serif;
-  color: #a64444;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  margin-left: 12px; /* 간격 */
-}
-
-#defaultBg:hover {
-  background-color: #ffd1d1;
-  transform: scale(1.02);
-  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.15);
-}
-
-#defaultBg:active {
-  transform: scale(0.98);
-  background-color: #ffbfbf;
-}
-.setting-section {
-  display: flex;
-  align-items: center;
 }

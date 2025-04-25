@@ -33,4 +33,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
   getUserDataPath: () => ipcRenderer.invoke("get-user-data-path"),
   restoreDefaultBackground: () =>
     ipcRenderer.invoke("restore-default-background"),
+  onOpenFileFromArg: (callback) =>
+    ipcRenderer.on("open-file-from-arg", (event, filePath) => {
+      callback(filePath);
+    }),
 });
