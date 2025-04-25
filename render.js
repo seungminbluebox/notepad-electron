@@ -5,7 +5,6 @@ window.addEventListener("DOMContentLoaded", () => {
     const isTransparent =
       localStorage.getItem("backgroundTransparent") === "true";
     const savedBg = window.electronAPI.loadBackgroundPath();
-
     function toFileUrl(path) {
       return `file://${encodeURI(path.replaceAll("\\", "/"))}`;
     }
@@ -230,6 +229,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const finalPath = toFileUrl(newBgPath) + `?v=${Date.now()}`; // 🔥 캐시 무효화
       document.body.style.backgroundImage = `url("${finalPath}")`; // 바로 반영!
       window.electronAPI.saveBackgroundPath(newBgPath); // 경로 저장
+      localStorage.removeItem("backgroundTransparent");
     }
   });
   document.getElementById("defaultBg").addEventListener("click", async () => {

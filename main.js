@@ -21,8 +21,8 @@ if (!app.isPackaged) {
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 730,
-    height: 880,
+    width: 530,
+    height: 560,
     frame: false, // 👈 기본 윈도우 타이틀 바 제거
     transparent: true, // ✅ 요게 핵심!
 
