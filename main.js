@@ -33,10 +33,12 @@ function createWindow() {
       nodeIntegration: false, // ✅ 반드시 false!
       enableRemoteModule: false, // ✅ 보안상 필요 없음
       sandbox: false, // ⚠️ 한글 경로 대응 가능, 단 보안상 위험 요소 있음
+      resizable: false, // ✅ 크기 조절 막기
     },
   });
   win.setMenu(null);
   win.loadFile("index.html");
+  win.setResizable(false);
   win.webContents.on("did-finish-load", () => {
     if (openFilePath) {
       win.webContents.send("open-file-from-arg", openFilePath);

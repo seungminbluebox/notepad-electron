@@ -52,7 +52,10 @@ body {
   margin: 0;
   background-color: #f5f5f5; /* 필요 시 배경색 */
 }
-
+* {
+  -webkit-user-select: none;
+  user-select: none;
+}
 .drop-overlay {
   position: fixed;
   top: 0;
