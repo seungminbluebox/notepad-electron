@@ -1,6 +1,8 @@
 //render.js
 
 window.addEventListener("DOMContentLoaded", () => {
+  window.onbeforeunload = null;
+
   (async () => {
     const isTransparent =
       localStorage.getItem("backgroundTransparent") === "true";
@@ -44,9 +46,7 @@ window.addEventListener("DOMContentLoaded", () => {
   document.querySelector(".min-btn").addEventListener("click", () => {
     window.electronAPI.windowControl("minimize");
   });
-  document.querySelector(".close-btn").addEventListener("click", () => {
-    window.electronAPI.windowControl("close");
-  });
+
   function toFileUrl(path) {
     return `file://${encodeURI(path.replaceAll("\\", "/"))}`;
   }
@@ -118,7 +118,10 @@ window.addEventListener("DOMContentLoaded", () => {
       fileLabel.title = filename;
 
       showSaved();
+      return true; // ✅ 저장 성공
     } else {
+      console.error("❌ 저장 실패");
+      return false; // ✅ 저장 실패
     }
   }
   //newNote버튼 기능 구현
@@ -266,5 +269,31 @@ window.addEventListener("DOMContentLoaded", () => {
       window.electronAPI.getFileName(filePath);
 
     currentFilePath = filePath; // ✅ 꼭 필요함!
+  });
+
+  document.querySelector(".close-btn").addEventListener("click", async () => {
+    const isWriting =
+      document.querySelector(".writing").style.display !== "none";
+    const hasContent = memo.value.trim() !== "";
+    const isNewNote = fileLabel.textContent === "new note";
+
+    if (isWriting && (hasContent || !isNewNote)) {
+      const { response } = await window.electronAPI.showConfirmDialog();
+
+      if (response === 0) {
+        // 저장하고 닫기
+        const result = await handleSave();
+        if (result) {
+          window.electronAPI.quitApp();
+        }
+      } else if (response === 1) {
+        // 그냥 닫기
+        window.electronAPI.quitApp();
+      }
+      // 취소(2번)는 아무것도 안 함
+    } else {
+      // 저장할 필요 없으면 바로 닫기
+      window.electronAPI.quitApp();
+    }
   });
 });

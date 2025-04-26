@@ -21,8 +21,8 @@ if (!app.isPackaged) {
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 530,
-    height: 560,
+    width: 530, //530
+    height: 560, //560
     frame: false, // 👈 기본 윈도우 타이틀 바 제거
     transparent: true, // ✅ 요게 핵심!
 
@@ -191,4 +191,25 @@ ipcMain.handle("restore-default-background", () => {
     console.warn("❌ 기본 이미지 없음:", defaultPath);
     return false;
   }
+});
+
+ipcMain.handle("force-close", (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  win.destroy();
+});
+ipcMain.handle("show-confirm-dialog", async () => {
+  const { dialog } = require("electron");
+  const result = await dialog.showMessageBox({
+    type: "question",
+    buttons: ["💾 저장하고 닫기", "❌ 그냥 닫기", "취소"],
+    defaultId: 0,
+    cancelId: 2,
+    title: "저장하고 닫기",
+    message: "저장하지 않은 변경사항이 있습니다. 저장하고 닫을까요?",
+  });
+  return result;
+});
+
+ipcMain.on("quit-app", () => {
+  app.quit();
 });
