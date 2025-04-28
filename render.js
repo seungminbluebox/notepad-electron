@@ -156,6 +156,31 @@ window.addEventListener("DOMContentLoaded", () => {
     console.error("❌ 파일 로드 실패");
     return false; // 파일 로드 실패
   }
+  async function handleAppClose() {
+    const isWriting =
+      document.querySelector(".writing").style.display !== "none"; // Writing 상태 확인
+    const hasContent = memo.value.trim() !== ""; // 메모 내용이 있는지 확인
+    const isNewNote = fileLabel.textContent === "new note"; // 새 노트인지 확인
+
+    if (isWriting && (hasContent || !isNewNote)) {
+      const { response } = await window.electronAPI.showConfirmDialog(); // 저장 여부 묻기
+
+      if (response === 0) {
+        // 저장하고 닫기
+        const result = await handleSave();
+        if (result) {
+          window.electronAPI.forceClose(); // 저장 성공했으면 강제 종료
+        }
+      } else if (response === 1) {
+        // 그냥 닫기
+        window.electronAPI.forceClose();
+      }
+      // 취소(2번)는 아무것도 안 함
+    } else {
+      // 작성 중이 아니면 바로 강제 종료
+      window.electronAPI.forceClose();
+    }
+  }
   //newNote버튼 기능 구현
   newNoteBtn.addEventListener("click", () => {
     memo.value = ""; // 텍스트 초기화
@@ -186,7 +211,7 @@ window.addEventListener("DOMContentLoaded", () => {
           showLoading("Saving..."); // 🔥 저장 중 표시
           const result = await handleSave();
           if (result) {
-            loadFile();
+            await loadFile();
           }
         }
         if (!result) {
@@ -196,14 +221,14 @@ window.addEventListener("DOMContentLoaded", () => {
         // 저장 성공했으니 계속 진행
       } else if (response === 1) {
         //그냥 닫고 열때
-        loadFile();
+        await loadFile();
       } else {
         // 취소
         return;
       }
     } else {
       //new note에다가 아무것도 안적어서 따로 저장할 필요 없을때
-      loadFile();
+      await loadFile();
     }
   });
 
@@ -329,30 +354,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
     currentFilePath = filePath; // ✅ 꼭 필요함!
   });
+  window.electronAPI.onTryAppClose(async () => {
+    await handleAppClose(); // 🔥 함수 호출
+  });
 
   document.querySelector(".close-btn").addEventListener("click", async () => {
-    const isWriting =
-      document.querySelector(".writing").style.display !== "none";
-    const hasContent = memo.value.trim() !== "";
-    const isNewNote = fileLabel.textContent === "new note";
-
-    if (isWriting && (hasContent || !isNewNote)) {
-      const { response } = await window.electronAPI.showConfirmDialog();
-
-      if (response === 0) {
-        // 저장하고 닫기
-        const result = await handleSave();
-        if (result) {
-          window.electronAPI.quitApp();
-        }
-      } else if (response === 1) {
-        // 그냥 닫기
-        window.electronAPI.quitApp();
-      }
-      // 취소(2번)는 아무것도 안 함
-    } else {
-      // 저장할 필요 없으면 바로 닫기
-      window.electronAPI.quitApp();
-    }
+    await handleAppClose(); // 🔥 함수 호출
   });
 });

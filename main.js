@@ -18,34 +18,73 @@ if (!app.isPackaged) {
     openFilePath = args[1];
   }
 }
+let mainWindow; // 👈 함수 밖(최상단)에 이거 선언 필요!
 
 function createWindow() {
-  const win = new BrowserWindow({
-    width: 530, //530
-    height: 560, //560
-    frame: false, // 👈 기본 윈도우 타이틀 바 제거
-    transparent: true, // ✅ 요게 핵심!
-
+  mainWindow = new BrowserWindow({
+    width: 530,
+    height: 560,
+    frame: false,
+    transparent: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
-      icon: path.join(__dirname, "image", "icon.ico"), // 👈 여기에 아이콘 경로 지정
-      nodeIntegration: false, // ✅ 반드시 false!
-      enableRemoteModule: false, // ✅ 보안상 필요 없음
-      sandbox: false, // ⚠️ 한글 경로 대응 가능, 단 보안상 위험 요소 있음
-      resizable: false, // ✅ 크기 조절 막기
+      icon: path.join(__dirname, "image", "icon.ico"),
+      nodeIntegration: false,
+      enableRemoteModule: false,
+      sandbox: false,
+      resizable: false,
     },
   });
-  win.setMenu(null);
-  win.loadFile("index.html");
-  win.setResizable(false);
-  win.webContents.on("did-finish-load", () => {
+  mainWindow.on("close", async (e) => {
+    e.preventDefault(); // 닫힘 막고
+    mainWindow.webContents.send("try-app-close"); // 렌더러에 "닫을거냐" 요청
+  });
+  mainWindow.setMenu(null);
+  mainWindow.loadFile("index.html");
+  mainWindow.setResizable(false);
+
+  mainWindow.webContents.on("did-finish-load", () => {
     if (openFilePath) {
-      win.webContents.send("open-file-from-arg", openFilePath);
+      mainWindow.webContents.send("open-file-from-arg", openFilePath);
     }
   });
-  // win.webContents.openDevTools(); //개발자도구 열기
+
+  // mainWindow.webContents.openDevTools(); // 개발자 도구 열기 (필요하면)
 }
+
+// function createWindow() {
+//   const win = new BrowserWindow({
+//     width: 530, //530
+//     height: 560, //560
+//     frame: false, // 👈 기본 윈도우 타이틀 바 제거
+//     transparent: true, // ✅ 요게 핵심!
+
+//     webPreferences: {
+//       preload: path.join(__dirname, "preload.js"),
+//       contextIsolation: true,
+//       icon: path.join(__dirname, "image", "icon.ico"), // 👈 여기에 아이콘 경로 지정
+//       nodeIntegration: false, // ✅ 반드시 false!
+//       enableRemoteModule: false, // ✅ 보안상 필요 없음
+//       sandbox: false, // ⚠️ 한글 경로 대응 가능, 단 보안상 위험 요소 있음
+//       resizable: false, // ✅ 크기 조절 막기
+//     },
+//   });
+//   win.setMenu(null);
+//   win.loadFile("index.html");
+//   win.setResizable(false);
+//   win.webContents.on("did-finish-load", () => {
+//     if (openFilePath) {
+//       win.webContents.send("open-file-from-arg", openFilePath);
+//     }
+//   });
+//   mainWindow.on("close", async (e) => {
+//     e.preventDefault(); // 닫힘 막고 직접 처리
+//     mainWindow.webContents.send("try-app-close"); // 렌더러에 "닫을거냐" 요청
+//   });
+
+//   // win.webContents.openDevTools(); //개발자도구 열기
+// }
 app.whenReady().then(() => {
   const userDataPath = app.getPath("userData");
   const bgImagePath = path.join(userDataPath, "background.png");

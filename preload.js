@@ -41,4 +41,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   showConfirmDialog: (message) =>
     ipcRenderer.invoke("show-confirm-dialog", message),
   quitApp: () => ipcRenderer.send("quit-app"),
+  onTryAppClose: (callback) => {
+    ipcRenderer.on("try-app-close", callback);
+  },
 });
