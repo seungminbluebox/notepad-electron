@@ -134,6 +134,28 @@ window.addEventListener("DOMContentLoaded", () => {
       return false; // ✅ 저장 실패
     }
   }
+  async function loadFile() {
+    showLoading("열 파일을 선택해주세요!"); // 로딩 메시지 표시
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // 1초 대기
+
+    const fileResult = await window.electronAPI.load(); // 파일 로드
+    hideLoading(); // 로딩 레이어 숨기기
+
+    if (fileResult) {
+      const { content, filename, filepath } = fileResult;
+
+      memo.value = content; // 메모 내용 업데이트
+      fileLabel.textContent = filename; // 파일 이름 업데이트
+      fileLabel.title = filename; // 파일 제목 업데이트
+      currentFilePath = filepath; // 현재 파일 경로 업데이트
+
+      showWriting(); // Writing 상태 표시
+      return true; // 파일 로드 성공
+    }
+
+    console.error("❌ 파일 로드 실패");
+    return false; // 파일 로드 실패
+  }
   //newNote버튼 기능 구현
   newNoteBtn.addEventListener("click", () => {
     memo.value = ""; // 텍스트 초기화
@@ -164,18 +186,7 @@ window.addEventListener("DOMContentLoaded", () => {
           showLoading("Saving..."); // 🔥 저장 중 표시
           const result = await handleSave();
           if (result) {
-            showLoading("열 파일을 선택해주세요!"); // 🔥 저장 끝나면 문구 변경
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // 2초 기다림
-            const fileResult = await window.electronAPI.load();
-            if (fileResult) {
-              const { content, filename, filepath } = fileResult;
-              memo.value = content;
-              fileLabel.textContent = filename;
-              fileLabel.title = filename;
-              currentFilePath = filepath;
-              showWriting();
-            }
-            hideLoading(); // 레이어 끄기
+            loadFile();
           }
         }
         if (!result) {
@@ -184,12 +195,15 @@ window.addEventListener("DOMContentLoaded", () => {
         }
         // 저장 성공했으니 계속 진행
       } else if (response === 1) {
-        // 그냥 계속하기
-        // 아무것도 안 하고 파일 열기
+        //그냥 닫고 열때
+        loadFile();
       } else {
         // 취소
         return;
       }
+    } else {
+      //new note에다가 아무것도 안적어서 따로 저장할 필요 없을때
+      loadFile();
     }
   });
 
