@@ -38,6 +38,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
       callback(filePath);
     }),
   forceClose: () => ipcRenderer.invoke("force-close"),
-  showConfirmDialog: () => ipcRenderer.invoke("show-confirm-dialog"),
+  showConfirmDialog: (message) =>
+    ipcRenderer.invoke("show-confirm-dialog", message),
   quitApp: () => ipcRenderer.send("quit-app"),
 });

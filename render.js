@@ -51,6 +51,16 @@ window.addEventListener("DOMContentLoaded", () => {
     return `file://${encodeURI(path.replaceAll("\\", "/"))}`;
   }
 
+  function showLoading(message = "Saving...") {
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    const loadingText = document.getElementById("loadingText");
+
+    loadingText.textContent = message;
+    loadingOverlay.classList.remove("hidden");
+  }
+  function hideLoading() {
+    document.getElementById("loadingOverlay").classList.add("hidden");
+  }
   let currentFilePath = null;
   let isWritingShown = false;
 
@@ -136,18 +146,53 @@ window.addEventListener("DOMContentLoaded", () => {
   });
   //open버튼 기능 구현
   openBtn.addEventListener("click", async () => {
-    const result = await window.electronAPI.load();
-    if (result) {
-      const { content, filename, filepath } = result;
+    const isWriting =
+      document.querySelector(".writing").style.display !== "none";
+    const hasContent = memo.value.trim() !== "";
+    const isNewNote = fileLabel.textContent === "new note";
 
-      memo.value = content;
-      fileLabel.textContent = filename;
-      fileLabel.title = filename;
-
-      currentFilePath = filepath; // 🔥 현재 경로 저장
-      showWriting(); // 📌 새 파일 불러왔으니 수정 상태
+    if (isWriting && (hasContent || !isNewNote)) {
+      const { response } = await window.electronAPI.showConfirmDialog(
+        "저장하지 않은 변경사항이 있습니다. 저장하고 열까요?"
+      );
+      if (response === 0) {
+        // 저장하고 계속하기
+        showLoading(); // 🔥 로딩 표시
+        const result = await handleSave();
+        if (response === 0) {
+          // 0 = 저장하고 열기
+          showLoading("Saving..."); // 🔥 저장 중 표시
+          const result = await handleSave();
+          if (result) {
+            showLoading("열 파일을 선택해주세요!"); // 🔥 저장 끝나면 문구 변경
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // 2초 기다림
+            const fileResult = await window.electronAPI.load();
+            if (fileResult) {
+              const { content, filename, filepath } = fileResult;
+              memo.value = content;
+              fileLabel.textContent = filename;
+              fileLabel.title = filename;
+              currentFilePath = filepath;
+              showWriting();
+            }
+            hideLoading(); // 레이어 끄기
+          }
+        }
+        if (!result) {
+          console.error("❌ 저장 실패. 파일을 열지 않습니다.");
+          return; // 저장 실패 시 중단
+        }
+        // 저장 성공했으니 계속 진행
+      } else if (response === 1) {
+        // 그냥 계속하기
+        // 아무것도 안 하고 파일 열기
+      } else {
+        // 취소
+        return;
+      }
     }
   });
+
   //save 버튼 기능 구현
   saveBtn.addEventListener("click", handleSave);
 

@@ -429,3 +429,28 @@ body {
 #closeSettings:hover {
   background-color: #4e79aa; /* 호버 시 배경색 변경 */
 }
+#loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  transition: opacity 0.3s ease;
+}
+
+#loadingOverlay.hidden {
+  display: none;
+}
+
+.loading-text {
+  font-family: "Patrick Hand", "Gowun Dodum", sans-serif;
+  font-size: 2rem;
+  color: #5da9ff;
+  animation: blink 1.5s infinite;
+}

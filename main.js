@@ -197,15 +197,19 @@ ipcMain.handle("force-close", (event) => {
   const win = BrowserWindow.fromWebContents(event.sender);
   win.destroy();
 });
-ipcMain.handle("show-confirm-dialog", async () => {
+ipcMain.handle("show-confirm-dialog", async (event, message) => {
   const { dialog } = require("electron");
   const result = await dialog.showMessageBox({
     type: "question",
-    buttons: ["💾 저장하고 닫기", "❌ 그냥 닫기", "취소"],
+    buttons: [
+      message ? "💾 저장하고 열기" : "💾 저장하고 닫기",
+      message ? "❌ 그냥 열기" : "❌ 그냥 닫기",
+      "취소",
+    ],
     defaultId: 0,
     cancelId: 2,
-    title: "저장하고 닫기",
-    message: "저장하지 않은 변경사항이 있습니다. 저장하고 닫을까요?",
+    title: message ? "저장하고 열기" : "저장하고 닫기",
+    message: message || "저장하지 않은 변경사항이 있습니다. 저장하고 닫을까요?",
   });
   return result;
 });
